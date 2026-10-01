@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -22,7 +22,41 @@ jobs:
           cache: npm
       
       - name: Install dependencies
-        run: ls && npm ci
+        run: npm ci
 
       - name: Build extension ZIP
         run: npx wxt zip
+
+      - name: Clean up old latest tag
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const tag = 'latest';
+
+            try {
+              const release = await github.rest.repos.getReleaseByTag({ owner, repo, tag });
+              await github.rest.repos.deleteRelease({ owner, repo, release_id: release.data.id });
+              console.log(`Deleted existing release ${tag}`);
+            } catch(e) {
+              console.log('Failed to delete release', e);
+            }
+
+            try {
+              await github.rest.git.deleteRef({owner, repo, ref: `tag/${tag}`});
+              console.log(`Deleted git ref for tag ${tag}`);
+            } catch (e) {
+              console.log('Failed to delete ref', e);
+            }
+
+      - name: Create Github release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: latest
+          name: Latest build
+          body: |
+            Automatic rolling release build from master branch
+          prerelease: true
+          files: |
+            .output/*.zip
