@@ -22,7 +22,7 @@ jobs:
           cache: npm
       
       - name: Install dependencies
-        run: npm ci
+        run: ls && npm ci
 
       - name: Build extension ZIP
         run: npx wxt zip
