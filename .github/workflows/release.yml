@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Build extension ZIP
-        run: npx wxt zip
+        run: npx wxt zip && npx wxt zip -b firefox
 
       - name: Clean up old latest tag
         uses: actions/github-script@v9
