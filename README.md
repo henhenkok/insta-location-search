@@ -26,4 +26,5 @@ Extension should arrive in extensions list:
 NOTE result is stored in browser no data submission happens(you can check code)
 
 3. Click download to get GeoJSON result with url of instagram locations around target area.
-4. Click clear to reset for form.
+4. Render result in GeoJSON renderer of your choice (for example https://geojson.io/)
+5. Click clear to reset for form.
